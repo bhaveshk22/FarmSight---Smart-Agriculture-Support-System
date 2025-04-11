@@ -8,7 +8,7 @@ function App() {
 
   return (
     <>
-    <div>Smart-Agriculture-Support-System</div>
+    <div classname='font-bold'>Smart-Agriculture-Support-System</div>
       
     </>
   )
