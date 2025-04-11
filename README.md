@@ -7,4 +7,3 @@ Hello Github!
  - Bhavesh Kabdwal
  - Navodit Pant
  - Swarnim Negi
- hello
