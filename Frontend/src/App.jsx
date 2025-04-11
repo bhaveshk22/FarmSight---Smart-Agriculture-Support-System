@@ -8,7 +8,8 @@ function App() {
 
   return (
     <>
-      Smart-Agriculture-Support-System
+    <div>Smart-Agriculture-Support-System</div>
+      
     </>
   )
 }
