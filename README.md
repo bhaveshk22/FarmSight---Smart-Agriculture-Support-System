@@ -1,4 +1,4 @@
-# Smart-Agriculture-Support-System
+# FarmSight - Smart Agriculture Support System
 
 Hello Github!
 
