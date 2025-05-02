@@ -20,8 +20,9 @@ git clone https://github.com/bhaveshk22/FarmSight---Smart-Agriculture-Support-Sy
 cd FarmSight---Smart-Agriculture-Support-System
 ```
 
-3. **Pull the LFS-tracked files (e.g., model.pkl):**
+⚠️ **If lfs not initialized before cloning**
 ```bash
+git lfs install
 git lfs pull
 ```
 ---
