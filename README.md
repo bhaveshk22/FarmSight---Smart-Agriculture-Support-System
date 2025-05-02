@@ -20,7 +20,7 @@ git clone https://github.com/bhaveshk22/FarmSight---Smart-Agriculture-Support-Sy
 cd FarmSight---Smart-Agriculture-Support-System
 ```
 
-⚠️ **If lfs not initialized before cloning**
+⚠️ **If LFS not initialized before cloning**
 ```bash
 git lfs install
 git lfs pull
