@@ -9,20 +9,21 @@ To clone and set up this project properly, follow the steps below. This reposito
 
 ### 🛠️ Step-by-Step Installation
 
-1. **Clone the Repository (with Git LFS):**
-
+1. **Make sure Git LFS is installed**
 ```bash
-# Make sure Git LFS is installed
 git lfs install
+```
 
-# Clone the repository
+2. **Clone the repository**
+```bash
 git clone https://github.com/bhaveshk22/FarmSight---Smart-Agriculture-Support-System.git
-
 cd FarmSight---Smart-Agriculture-Support-System
+```
 
-# Pull the LFS-tracked files (e.g., model.pkl):
+⚠️ **If LFS not initialized before cloning**
+```bash
+git lfs install
 git lfs pull
-
 ```
 ---
  ## Contributors:
