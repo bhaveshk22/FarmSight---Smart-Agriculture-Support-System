@@ -19,7 +19,19 @@ git lfs install
 git clone https://github.com/bhaveshk22/FarmSight---Smart-Agriculture-Support-System.git
 cd FarmSight---Smart-Agriculture-Support-System
 ```
-
+3. **Create Environments**
+```bash
+python -m venv env
+env/Scripts/activate
+```
+4. **Install Required Dependies**
+```bash
+pip install -r requirement.txt
+```
+5. **Run Backend API**
+```bash
+    python -m uvicorn Backend.main:app --reload
+```
 ⚠️ **If LFS not initialized before cloning**
 ```bash
 git lfs install
