@@ -103,11 +103,11 @@ async def create_crop_endpoint(request: CropCreateRequest):
     """
     try:
         existing_crop = await get_crop_by_name(request.crop_name)
-        if existing_crop:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Crop with name '{request.crop_name}' already exists"
-            )
+        # if existing_crop:
+        #     raise HTTPException(
+        #         status_code=status.HTTP_400_BAD_REQUEST,
+        #         detail=f"Crop with name '{request.crop_name}' already exists"
+        #     )
 
         crop_model = CropModel(
             crop_name=request.crop_name,
@@ -235,4 +235,43 @@ async def delete_crop_endpoint(crop_id: str):
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to delete crop: {str(e)}"
+        )
+
+@router.get("/name/{crop_name}", status_code=status.HTTP_200_OK, response_model=List[CropResponse])
+async def get_crop_name_endpoint(crop_name: str):
+    """
+    Get all crop records by crop name.
+    """
+    try:
+        crops = await get_crop_by_name(crop_name)  # This should return a list of crops
+        if not crops:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"No crops found with name '{crop_name}'"
+            )
+
+        return [
+            {
+                "status": "success",
+                "id": str(crop["_id"]),
+                "crop_name": crop["crop_name"],
+                "crop_year": crop["crop_year"],
+                "season": crop["season"],
+                "area": crop["area"],
+                "annual_rainfall": crop["annual_rainfall"],
+                "fertilizer": crop["fertilizer"],
+                "pesticide": crop["pesticide"],
+                "predicted_yield": crop.get("predicted_yield"),
+                "created_at": crop["created_at"].isoformat(),
+                "updated_at": crop.get("updated_at", "").isoformat() if crop.get("updated_at") else None,
+                "tags": crop.get("tags", [])
+            }
+            for crop in crops
+        ]
+
+    except Exception as e:
+        logger.error(f"Error in get_crop_name_endpoint: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to get crops: {str(e)}"
         )
