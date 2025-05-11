@@ -9,8 +9,9 @@ from models.database import CropModel, CropUpdateModel
 
 logger = logging.getLogger(__name__)
 
-MONGO_URI=settings.MONGODB_CONNECTION_STRING
+# MONGO_URI=settings.MONGODB_CONNECTION_STRING
 # MongoDB setup
+MONGO_URI="mongodb+srv://negiswarnim06:fs4AMgkI4z6Ve5SN@farmsight.91g996w.mongodb.net/?retryWrites=true&w=majority&appName=FarmSight"
 client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_URI)
 db = client["FarmSight"]
 crop_collection = db["crops"]  # collection renamed
@@ -39,11 +40,15 @@ async def get_crop_by_id(crop_id: str) -> Optional[Dict[str, Any]]:
         logger.error(f"Error retrieving crop by ID: {e}")
         return None
 
-async def get_crop_by_name(name: str) -> Optional[Dict[str, Any]]:
+async def get_crop_by_name(name: str):
     """
     Get a crop record by name.
     """
-    return await crop_collection.find_one({"name": name})
+    crops_cursor = crop_collection.find({
+        "crop_name": {"$regex": f"^{name}$", "$options": "i"}
+    })
+    return await crops_cursor.to_list(length=100)
+
 
 async def create_crop(crop_data: CropModel) -> Dict[str, Any]:
     """
