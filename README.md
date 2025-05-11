@@ -23,16 +23,19 @@ cd FarmSight---Smart-Agriculture-Support-System
 ```bash
 git lfs install
 git lfs pull
+```
 
 3. **Create Environments**
 ```bash
 python -m venv env
 env\Scripts\activate
 ```
+
 4. **Install Required Dependies**
 ```bash
 pip install -r requirement.txt
 ```
+
 5. **Run Backend API**
 ```bash
     python -m uvicorn FastApi-Backend.main:app --reload
