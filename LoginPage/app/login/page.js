@@ -11,7 +11,7 @@ const Login = () => {
   useEffect(() => { 
     console.log(session)
     if (session) {
-      router.push('/dashboard')
+          window.location.href = 'http://localhost:3001/';
     }
   }, [session])
 

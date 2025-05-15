@@ -1,0 +1,11 @@
+fastapi 
+pydantic 
+uvicorn 
+numpy 
+pandas 
+scikit-learn 
+motor 
+pymongo 
+python-dotenv 
+python-multipart 
+pydantic_settings
