@@ -33,7 +33,7 @@ const Navbar = () => {
 
                     </div> */}
                     <div className="flex text-black gap-5 items-center">
-                        <Link href='/signup'>
+                        <Link href='/login'>
                             <button type="button" className="text-white cursor-pointer hover:underline">SignUp</button>
                         </Link>
                         <Link href='/login'>

@@ -40,6 +40,8 @@ export default function Dashboard() {
 
   }, []);
 
+
+  
   // weather dialog box
   const [weatherOpen, setWeatherOpen] = useState(false);
 
@@ -48,10 +50,10 @@ export default function Dashboard() {
   };
 
   return (
-    
+
     <div className="flex h-screen bg-gray-50">
-      
-    
+
+
 
       {/* Sidebar */}
       <div className="w-64 border-r bg-white">
@@ -65,57 +67,57 @@ export default function Dashboard() {
         </div>
 
 
-        <ScrollArea className="h-[calc(100vh-64px)]">
+        <ScrollArea className="h-[calc(100vh-100px)]">
           <div className="p-4">
             <div className="mb-6">
               <p className="text-xs font-semibold text-gray-500 mb-2">GENERAL</p>
               <div className="space-y-1">
                 <a href="/">
-                <Button
-                  variant="ghost"
-                  className="w-full cursor-pointer justify-start bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="mr-2"
+                  <Button
+                    variant="ghost"
+                    className="w-full cursor-pointer justify-start bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800"
                   >
-                    <rect width="18" height="18" x="3" y="3" rx="2" />
-                    <path d="M9 9h.01" />
-                    <path d="M15 9h.01" />
-                    <path d="M9 15h.01" />
-                    <path d="M15 15h.01" />
-                  </svg>
-                  Dashboard
-                </Button>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="mr-2"
+                    >
+                      <rect width="18" height="18" x="3" y="3" rx="2" />
+                      <path d="M9 9h.01" />
+                      <path d="M15 9h.01" />
+                      <path d="M9 15h.01" />
+                      <path d="M15 15h.01" />
+                    </svg>
+                    Dashboard
+                  </Button>
                 </a>
-                <Button variant="ghost" className="w-full justify-start">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="mr-2"
-                  >
-                    <rect width="18" height="18" x="3" y="3" rx="2" />
-                    <line x1="9" x2="15" y1="7" y2="7" />
-                    <line x1="9" x2="15" y1="11" y2="11" />
-                    <line x1="9" x2="13" y1="15" y2="15" />
-                  </svg>
-                  Financial
-                </Button>
+                <a href="/crops/addnewcrop">
+                  <Button variant="ghost" className="w-full cursor-pointer justify-start">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="mr-2"
+                    >
+                      <path d="M21 7v6h-6" />
+                      <path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7" />
+                    </svg>
+                    Add New Crop
+                  </Button>
+                </a>
                 <Button onClick={() => setWeatherOpen(true)} variant="ghost" className="w-full cursor-pointer justify-start">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -137,35 +139,9 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="mb-6">
-              <p className="text-xs font-semibold text-gray-500 mb-2">MANAGEMENT</p>
-              <div className="space-y-1">
-                <a href="/crops/addnewcrop">
-                <Button variant="ghost" className="w-full cursor-pointer justify-start">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="mr-2"
-                  >
-                    <path d="M21 7v6h-6" />
-                    <path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7" />
-                  </svg>
-                  Add New Crop
-                </Button>
-                </a>
-              </div>
-            </div>
 
-            
-          </div> 
-        </ScrollArea> 
+          </div>
+        </ScrollArea>
       </div>
 
 
@@ -244,19 +220,12 @@ export default function Dashboard() {
                 <span>Filter</span>
               </Button>
 
-              <Button
-                variant="default"
-                size="sm"
-                className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700"
-              >
-                <Download className="h-4 w-4" />
-                <span>Download</span>
-              </Button>
+              
             </div>
           </div>
         </main>
 
-        <CropDataDashboard/>
+        <CropDataDashboard />
       </div >
     </div >
   )

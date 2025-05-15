@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -5,6 +7,10 @@ import {
 } from 'recharts';
 import Papa from 'papaparse';
 import _ from 'lodash';
+import { useRouter } from 'next/navigation';
+import { Button } from "@/components/ui/button"
+import { Download } from 'lucide-react';
+import { predictYield } from '@/utils/api';
 
 // Define TypeScript interfaces for our data based on the API schema
 interface Crop {
@@ -67,7 +73,7 @@ const processData = (data: CropsListResponse) => {
     .map(crop => ({
       id: crop.id.substring(0, 6),
       crop_name: crop.crop_name,
-      predicted_yield: crop.predicted_yield,
+      predicted_yield: crop.predicted_yield != null ? parseFloat((crop.predicted_yield * 1000).toFixed(3)) : null,
       rainfall: crop.annual_rainfall,
       pesticide: crop.pesticide
     }));
@@ -127,10 +133,11 @@ export default function CropDataDashboard() {
       const response = await fetch(`${API_BASE_URL}/crops/list`);
 
       if (!response.ok) {
-        throw new Error('Failed to fetch data');
+        throw new Error(`Failed to fetch data: ${response.statusText}`);
       }
 
-      const fetchedData: CropsListResponse = await response.json();
+      const fetchedData = await response.json();
+      console.log("Fetched data:", fetchedData); // Debug logging
       setData(fetchedData);
       setError(null);
     } catch (err) {
@@ -139,6 +146,12 @@ export default function CropDataDashboard() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const router = useRouter();
+
+  const handleEdit = (cropId: string) => {
+    router.push(`/crops/addnewcrop?id=${cropId}`);
   };
 
   // Initial data fetch
@@ -226,41 +239,13 @@ export default function CropDataDashboard() {
     document.body.removeChild(link);
   };
 
-  // Request prediction for a crop
-  const requestPrediction = async (cropId: string) => {
-    try {
-      const predictionRequest: CropPredictionRequest = {
-        crop_id: cropId
-      };
-
-      const response = await fetch(`${API_BASE_URL}/model/predict, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(predictionRequest),
-      }`);
-
-      if (!response.ok) {
-        throw new Error('Failed to get prediction');
-      }
-
-      // After successful prediction, refresh the data
-      await fetchCrops();
-
-    } catch (err) {
-      console.error('Error getting prediction:', err);
-      alert('Failed to get prediction');
-    }
-  };
-
   // Delete a crop
   const deleteCrop = async (cropId: string) => {
     if (window.confirm('Are you sure you want to delete this crop record?')) {
       try {
-        const response = await fetch(`${API_BASE_URL}/crops/${cropId}, {
+        const response = await fetch(`${API_BASE_URL}/crops/${cropId}`, {
           method: 'DELETE',
-        }`);
+        });
 
         if (!response.ok) {
           throw new Error('Failed to delete crop');
@@ -329,13 +314,16 @@ export default function CropDataDashboard() {
           </select>
         </div>
 
-        <div className="flex gap-4">
-          <button
+        <div className="flex items-center gap-4">
+          <Button
             onClick={exportToCsv}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            variant="default"
+            size="sm"
+            className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700"
           >
-            Export to CSV
-          </button>
+            <Download className="h-4 w-4" />
+            <span>Download</span>
+          </Button>
 
           <div className="flex flex-col">
             <label className="text-sm font-medium">Import CSV:</label>
@@ -361,29 +349,26 @@ export default function CropDataDashboard() {
               <>
                 <h2 className="text-lg font-semibold mb-4">Crop Distribution</h2>
                 <ResponsiveContainer width="100%" height="90%">
-                  <>
-                    <PieChart>
-                      <Pie
-                        data={processedData.cropDistribution}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={true}
-                        outerRadius={80}
-                        fill="#8884d8"
-                        dataKey="value"
-                        nameKey="name"
-                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`} // ✅ Template literal fix
-                      >
-                        {processedData.cropDistribution.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} /> // ✅ Proper key syntax
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                      <Legend />
-                    </PieChart>
-                  </>
+                  <PieChart>
+                    <Pie
+                      data={processedData.cropDistribution}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={true}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                      nameKey="name"
+                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                    >
+                      {processedData.cropDistribution.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                    <Legend />
+                  </PieChart>
                 </ResponsiveContainer>
-
               </>
             )}
 
@@ -400,8 +385,8 @@ export default function CropDataDashboard() {
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    <Bar dataKey="predicted_yield" name="Predicted Yield" fill="#8884d8" />
-                    <Bar dataKey="rainfall" name="Rainfall" fill="#82ca9d" />
+                    <Bar dataKey="predicted_yield" name="Predicted Yield (kg)" fill="#8884d8" />
+                    <Bar dataKey="rainfall" name="Rainfall (mm)" fill="#82ca9d" />
                     <Bar dataKey="pesticide" name="Pesticide" fill="#ffc658" />
                   </BarChart>
                 </ResponsiveContainer>
@@ -519,114 +504,91 @@ export default function CropDataDashboard() {
             onClick={() => {
               const newCrop = window.prompt('Enter crop name to search:');
               if (newCrop) {
-                fetch(`${ API_BASE_URL } / crops / name / ${ newCrop }`)
+                fetch(`${API_BASE_URL} / crops / name / ${newCrop}`)
                   .then(response => {
                     if (response.ok) return response.json();
                     throw new Error('Crop not found');
                   })
                   .then(crops => {
                     if (crops.length > 0) {
-                      alert(`Found ${ crops.length } entries for "${newCrop}"`);
+                      alert(`Found ${crops.length} entries for "${newCrop}"`);
                       setSelectedCrop(newCrop);
                     } else {
                       alert(`No crops found with name "${newCrop}"`);
-              }
-            })
+                    }
+                  })
                   .catch(err => {
-            console.error(err);
-          alert('Error searching for crop');
+                    console.error(err);
+                    alert('Error searching for crop');
                   });
               }
             }}
-          className="px-3 py-1 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 text-sm"
+            className="px-3 py-1 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 text-sm"
           >
-          Search by Name
-        </button>
-      </div>
+            Search by Name
+          </button>
+        </div>
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Crop</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Year</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Season</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Area</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rainfall</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fertilizer</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pesticide</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Predicted Yield</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {data.crops.length > 0 ? (
-              data.crops
-                .filter(crop => !selectedCrop || crop.crop_name === selectedCrop)
-                .map((crop) => (
-                  <tr key={crop.id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">{crop.id.substring(0, 8)}...</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{crop.crop_name}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{crop.crop_year}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{crop.season}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{crop.area}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{crop.annual_rainfall}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{crop.fertilizer}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{crop.pesticide}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {crop.predicted_yield !== null ? crop.predicted_yield.toFixed(2) :
-                        <button
-                          onClick={() => requestPrediction(crop.id)}
-                          className="px-2 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700"
-                        >
-                          Get Prediction
-                        </button>
-                      }
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => {
-                            // Navigate to edit page or open modal
-                            const cropId = crop.id;
-                            alert(`Edit functionality would open for crop ID: ${ cropId }`);
-                          }}
-                        className="px-2 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700"
-                        >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => deleteCrop(crop.id)}
-                        className="px-2 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
-                  </tr>
-          ))
-          ) : (
-          <tr>
-            <td colSpan={10} className="px-6 py-4 text-center text-gray-500">No data available</td>
-          </tr>
+        <div className="overflow-x-auto h-[90vh] hide-scrollbar">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50 sticky top-0 z-10">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">S.No</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Crop</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Year</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Season</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Area</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rainfall</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fertilizer</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pesticide</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Predicted Yield (tonne)</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {data.crops.length > 0 ? (
+                data.crops
+                  .filter(crop => !selectedCrop || crop.crop_name === selectedCrop)
+                  .map((crop, index) => (
+                    <tr key={crop.id}>
+                      <td className="px-6 py-4 text-center whitespace-nowrap text-sm">{index + 1}</td>
+                      <td className="px-6 py-4 text-center whitespace-nowrap">{crop.crop_name}</td>
+                      <td className="px-6 py-4 text-center whitespace-nowrap">{crop.crop_year}</td>
+                      <td className="px-6 py-4 text-center whitespace-nowrap">{crop.season}</td>
+                      <td className="px-6 py-4 text-center whitespace-nowrap">{crop.area}</td>
+                      <td className="px-6 py-4 text-center whitespace-nowrap">{crop.annual_rainfall}</td>
+                      <td className="px-6 py-4 text-center whitespace-nowrap">{crop.fertilizer}</td>
+                      <td className="px-6 py-4 text-center whitespace-nowrap">{crop.pesticide}</td>
+                      <td className="px-6 py-4 text-center whitespace-nowrap">
+                        {crop.predicted_yield != null ? parseFloat((crop.predicted_yield).toFixed(3)) : 'N/A'}
+                      </td>
+                      <td className="px-6 py-4 text-center whitespace-nowrap">
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => { handleEdit(crop.id) }}
+                            className="px-2 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => deleteCrop(crop.id)}
+                            className="px-2 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+              ) : (
+                <tr>
+                  <td colSpan={10} className="px-6 py-4 text-center text-gray-500">No data available</td>
+                </tr>
               )}
-        </tbody>
-      </table>
-    </div>
-      </div >
+            </tbody>
+          </table>
+        </div>
 
-    {/* Add New Crop Button */ }
-    < div className = "mt-8 flex justify-end" >
-      <button
-        onClick={() => {
-          // Navigate to create page or open modal
-          alert("Add new crop functionality would open here");
-        }}
-        className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-      >
-        Add New Crop
-      </button>
       </div >
     </div >
   );
