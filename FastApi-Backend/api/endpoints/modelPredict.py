@@ -9,8 +9,8 @@ import pandas as pd
 router = APIRouter(prefix="/api/model", tags=["Model"])
 
 # Load model and dataset
-model_path = r"D:\Smart-Agriculture-Support-System\Model\model.pkl"
-dataset_path = r"D:\Smart-Agriculture-Support-System\Model\dataset.csv"
+model_path = 
+dataset_path = r"C:\Z Local Disk (D)\\Final year project\\FarmSight---Smart-Agriculture-Support-System\\Model\\dataset.csv"
 
 with open(model_path, 'rb') as f:
     model = pickle.load(f)
