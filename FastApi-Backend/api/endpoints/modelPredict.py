@@ -9,7 +9,7 @@ import pandas as pd
 router = APIRouter(prefix="/api/model", tags=["Model"])
 
 # Load model and dataset
-model_path = 
+model_path = r"C:\Z Local Disk (D)\\Final year project\\FarmSight---Smart-Agriculture-Support-System\\Model\\model.pkl"
 dataset_path = r"C:\Z Local Disk (D)\\Final year project\\FarmSight---Smart-Agriculture-Support-System\\Model\\dataset.csv"
 
 with open(model_path, 'rb') as f:
