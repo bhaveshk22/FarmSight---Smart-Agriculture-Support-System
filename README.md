@@ -5,7 +5,7 @@ An AI-powered platform to assist farmers with crop yield prediction, resource pl
 
 ## 🚀 Getting Started
 
-To clone and set up this project properly, follow the steps below. This repository uses **Git LFS** to manage large files like trained models.
+To clone and set up this project properly, follow the steps below. 
 
 ### 🛠️ Step-by-Step Installation
 ⚠️ Please download the model from the this [Link](https://drive.google.com/file/d/19BHv-F11HHAwKJRsphtGOyz30gg3GWuK/view?usp=sharing) and place it under Model folder
