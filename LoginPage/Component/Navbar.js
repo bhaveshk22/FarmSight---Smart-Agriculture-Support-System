@@ -9,7 +9,7 @@ const Navbar = () => {
                     <div className='flex gap-20'>
                     <div>
                         <a href="/">
-                            <span className='mt-3 text-xl text-white hover:text-[#c7e747]'>FarmSight</span>
+                            <span className='mt-3 text-xl text-white hover:text-[#c7e747]'>Smart Kisaan</span>
                         </a>
                     </div>
                     <div className='text-white'>

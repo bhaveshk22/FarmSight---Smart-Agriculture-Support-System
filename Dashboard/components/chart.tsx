@@ -18,9 +18,12 @@ interface Crop {
   crop_name: string;
   crop_year: number;
   season: string;
+  soil_type: string;
   area: number;
   annual_rainfall: number;
-  fertilizer: number;
+  fertilizer_n: number;
+  fertilizer_p: number;
+  fertilizer_k: number;
   pesticide: number;
   predicted_yield: number | null;
   created_at: string;
@@ -45,9 +48,12 @@ interface CropCreateRequest {
   crop_name: string;
   crop_year: number;
   season: string;
+  soil_type: string;
   area: number;
   annual_rainfall: number;
-  fertilizer: number;
+  fertilizer_n: number;
+  fertilizer_p: number;
+  fertilizer_k: number;
   pesticide: number;
   tags?: string[] | null;
 }
@@ -84,7 +90,9 @@ const processData = (data: CropsListResponse) => {
     .map((group, year) => ({
       year: parseInt(year),
       rainfall: _.meanBy(group, 'annual_rainfall'),
-      fertilizer: _.meanBy(group, 'fertilizer') / 1000, // Scale down for visualization
+      fertilizer_n: _.meanBy(group, 'fertilizer_n') / 1000, // Scale down for visualization
+      fertilizer_p: _.meanBy(group, 'fertilizer_p') / 1000, // Scale down for visualization
+      fertilizer_k: _.meanBy(group, 'fertilizer_k') / 1000, // Scale down for visualization
       pesticide: _.meanBy(group, 'pesticide')
     }))
     .sortBy('year')
@@ -189,9 +197,12 @@ export default function CropDataDashboard() {
                   crop_name: cropData.crop_name,
                   crop_year: parseInt(cropData.crop_year),
                   season: cropData.season,
+                  soil_type: cropData.soil_type,
                   area: parseFloat(cropData.area),
                   annual_rainfall: parseFloat(cropData.annual_rainfall),
-                  fertilizer: parseFloat(cropData.fertilizer),
+                  fertilizer_n: parseFloat(cropData.fertilizer_n),
+                  fertilizer_p: parseFloat(cropData.fertilizer_p),
+                  fertilizer_k: parseFloat(cropData.fertilizer_k),
                   pesticide: parseFloat(cropData.pesticide),
                   tags: cropData.tags ? cropData.tags.split(',').map((tag: string) => tag.trim()) : []
                 };
@@ -296,7 +307,7 @@ export default function CropDataDashboard() {
 
   return (
     <div className="flex flex-col p-4 bg-gray-50 min-h-screen">
-      <h1 className="text-2xl font-bold mb-6 text-center">FarmSight Crop Data Dashboard</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center">Dashboard</h1>
 
       {/* Controls */}
       <div className="flex flex-col md:flex-row gap-4 mb-8 justify-between">
@@ -325,15 +336,7 @@ export default function CropDataDashboard() {
             <span>Download</span>
           </Button>
 
-          <div className="flex flex-col">
-            <label className="text-sm font-medium">Import CSV:</label>
-            <input
-              type="file"
-              accept=".csv"
-              onChange={handleFileUpload}
-              className="text-sm border rounded p-1"
-            />
-          </div>
+          
         </div>
       </div>
 
@@ -407,7 +410,9 @@ export default function CropDataDashboard() {
                     <Tooltip />
                     <Legend />
                     <Line type="monotone" dataKey="rainfall" name="Annual Rainfall" stroke="#8884d8" activeDot={{ r: 8 }} />
-                    <Line type="monotone" dataKey="fertilizer" name="Avg Fertilizer (÷1000)" stroke="#82ca9d" />
+                    <Line type="monotone" dataKey="fertilizer_n" name="Avg Fertilizer N (÷1000)" stroke="#82ca9d" />
+                    <Line type="monotone" dataKey="fertilizer_p" name="Avg Fertilizer P (÷1000)" stroke="#ff7300" />
+                    <Line type="monotone" dataKey="fertilizer_k" name="Avg Fertilizer K (÷1000)" stroke="#413ea0" />
                     <Line type="monotone" dataKey="pesticide" name="Avg Pesticide" stroke="#ffc658" />
                   </LineChart>
                 </ResponsiveContainer>
@@ -533,16 +538,19 @@ export default function CropDataDashboard() {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50 sticky top-0 z-10">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">S.No</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Crop</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Year</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Season</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Area</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rainfall</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fertilizer</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pesticide</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Predicted Yield (tonne)</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">S.No</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">Crop</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">Year</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">Season</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">Soil Type</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">Area</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">Rainfall (mm)</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">Fertilizer (N)</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">Fertilizer (P)</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">Fertilizer (K)</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">Pesticide</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">Predicted Yield (tonne)</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -555,9 +563,12 @@ export default function CropDataDashboard() {
                       <td className="px-6 py-4 text-center whitespace-nowrap">{crop.crop_name}</td>
                       <td className="px-6 py-4 text-center whitespace-nowrap">{crop.crop_year}</td>
                       <td className="px-6 py-4 text-center whitespace-nowrap">{crop.season}</td>
+                      <td className="px-6 py-4 text-center whitespace-nowrap">{crop.soil_type}</td>
                       <td className="px-6 py-4 text-center whitespace-nowrap">{crop.area}</td>
                       <td className="px-6 py-4 text-center whitespace-nowrap">{crop.annual_rainfall}</td>
-                      <td className="px-6 py-4 text-center whitespace-nowrap">{crop.fertilizer}</td>
+                      <td className="px-6 py-4 text-center whitespace-nowrap">{crop.fertilizer_n}</td>
+                      <td className="px-6 py-4 text-center whitespace-nowrap">{crop.fertilizer_p}</td>
+                      <td className="px-6 py-4 text-center whitespace-nowrap">{crop.fertilizer_k}</td>
                       <td className="px-6 py-4 text-center whitespace-nowrap">{crop.pesticide}</td>
                       <td className="px-6 py-4 text-center whitespace-nowrap">
                         {crop.predicted_yield != null ? parseFloat((crop.predicted_yield).toFixed(3)) : 'N/A'}

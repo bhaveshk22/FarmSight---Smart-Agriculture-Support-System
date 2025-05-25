@@ -38,9 +38,12 @@ class CropModel(BaseModel):
     crop_name: str = Field(..., description="Crop type, e.g., Rice")
     crop_year: int = Field(..., description="Year of cultivation")
     season: str = Field(..., description="Season of cropping")
+    soil_type: str = Field(..., description="Type of the soil")
     area: float = Field(..., description="Cultivated area in hectares")
     annual_rainfall: float = Field(..., description="Annual rainfall in mm")
-    fertilizer: float = Field(..., description="Fertilizer used in kg/ha")
+    fertilizer_n: float = Field(..., description="Fertilizer (N) used (kg/ha)")
+    fertilizer_p: float = Field(..., description="Fertilizer (P) used (kg/ha)")
+    fertilizer_k: float = Field(..., description="Fertilizer (K) used (kg/ha)")
     pesticide: float = Field(..., description="Pesticide used in kg/ha")
     predicted_yield: Optional[float] = Field(None, description="Model-predicted crop yield")
     tags: List[str] = Field(default_factory=list, description="Optional tags (e.g., region, priority)")
@@ -58,9 +61,12 @@ class CropUpdateModel(BaseModel):
     crop_name: Optional[str] = None
     crop_year: Optional[int] = None
     season: Optional[str] = None
+    soil_type: Optional[str] = None
     area: Optional[float] = None
     annual_rainfall: Optional[float] = None
-    fertilizer: Optional[float] = None
+    fertilizer_n: Optional[float] = None
+    fertilizer_p: Optional[float] = None
+    fertilizer_k: Optional[float] = None
     pesticide: Optional[float] = None
     predicted_yield: Optional[float] = None
     tags: Optional[List[str]] = None

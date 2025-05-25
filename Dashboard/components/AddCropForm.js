@@ -14,9 +14,12 @@ const AddCropForm = () => {
     crop_name: '',
     crop_year: currentYear.toString(),
     season: '',
+    soil_type: '',
     area: '',
     annual_rainfall: '',
-    fertilizer: '',
+    fertilizer_n: '',
+    fertilizer_p: '',
+    fertilizer_k: '',
     pesticide: '',
     tags: '',
     location: '',
@@ -55,9 +58,12 @@ const AddCropForm = () => {
         crop_name: crop.crop_name || '',
         crop_year: crop.crop_year ? crop.crop_year.toString() : currentYear.toString(),
         season: crop.season || '',
+        soil_type: crop.soil_type || '',
         area: crop.area || '',
         annual_rainfall: crop.annual_rainfall || '',
-        fertilizer: crop.fertilizer || '',
+        fertilizer_n: crop.fertilizer_n || '',
+        fertilizer_p: crop.fertilizer_p || '',
+        fertilizer_k: crop.fertilizer_k || '',
         pesticide: crop.pesticide || '',
         tags: crop.tags ? crop.tags.join(', ') : '',
         location: crop.location || '',
@@ -196,9 +202,13 @@ const AddCropForm = () => {
     return {
       ...formData,
       crop_year: parseInt(formData.crop_year),
+      season: formData.season,
+      soil_type: formData.soil_type,
       area: parseFloat(formData.area),
       annual_rainfall: parseFloat(formData.annual_rainfall),
-      fertilizer: parseFloat(formData.fertilizer),
+      fertilizer_n: parseFloat(formData.fertilizer_n),
+      fertilizer_p: parseFloat(formData.fertilizer_p),
+      fertilizer_k: parseFloat(formData.fertilizer_k),
       pesticide: parseFloat(formData.pesticide),
       tags: formData.tags ? formData.tags.split(',').map(tag => tag.trim()) : [],
       location: formData.location,
@@ -255,9 +265,12 @@ const AddCropForm = () => {
       crop_name: '',
       crop_year: currentYear.toString(),
       season: '',
+      soil_type: '',
       area: '',
       annual_rainfall: '',
-      fertilizer: '',
+      fertilizer_n: '',
+      fertilizer_p: '',
+      fertilizer_k: '',
       pesticide: '',
       tags: '',
       location: '',
@@ -276,7 +289,7 @@ const AddCropForm = () => {
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-10 border border-gray-200">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold text-gray-800">🌾 Add New Crop</h2>
+        <h2 className="text-3xl font-bold text-gray-800">🌾 Select Crop</h2>
         <Link href="/" className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-md transition flex items-center">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
@@ -308,6 +321,10 @@ const AddCropForm = () => {
               <div>
                 <p className="text-gray-600 text-sm">Season</p>
                 <p className="font-medium">{formData.season}</p>
+              </div>
+              <div>
+                <p className="text-gray-600 text-sm">Soil Type</p>
+                <p className="font-medium">{formData.soil_type}</p>
               </div>
               <div>
                 <p className="text-gray-600 text-sm">Area</p>
@@ -347,7 +364,7 @@ const AddCropForm = () => {
                 onClick={handleAddAnother}
                 className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md font-semibold hover:bg-blue-700 transition"
               >
-                Add Another Crop
+                Select Another Crop
               </button>
             </div>
           </div>
@@ -403,16 +420,34 @@ const AddCropForm = () => {
             <label htmlFor="crop_name" className="block text-sm font-medium text-gray-700 mb-1">
               Crop Name
             </label>
-            <input
-              type="text"
+            <select
               name="crop_name"
               id="crop_name"
               value={formData.crop_name}
               onChange={handleChange}
               required
               className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            />
+            >
+              <option value="">Select crop</option>
+              <option value="Rice">Rice</option>
+              <option value="Wheat">Wheat</option>
+              <option value="Maize">Maize</option>
+              <option value="Sugarcane">Sugarcane</option>
+              <option value="Cotton(lint)">Cotton (lint)</option>
+              <option value="Soyabean">Soyabean</option>
+              <option value="Potato">Potato</option>
+              <option value="Groundnut">Groundnut</option>
+              <option value="Rapeseed &Mustard">Rapeseed & Mustard</option>
+              <option value="Jowar">Jowar</option>
+              <option value="Bajra">Bajra</option>
+              <option value="Arhar/Tur">Arhar/Tur</option>
+              <option value="Masoor">Masoor</option>
+              <option value="Urad">Urad</option>
+              <option value="Moong">Moong</option>
+              <option value="Gram">Gram</option>
+            </select>
           </div>
+
 
           <div>
             <label htmlFor="crop_year" className="block text-sm font-medium text-gray-700 mb-1">
@@ -451,6 +486,28 @@ const AddCropForm = () => {
               <option value="Winter">Winter</option>
               <option value="Rainy">Rainy</option>
               <option value="Dry">Dry</option>
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="soil_type" className="block text-sm font-medium text-gray-700 mb-1">
+              Soil Type
+            </label>
+            <select
+              name="soil_type"
+              id="soil_type"
+              value={formData.soil_type}
+              onChange={handleChange}
+              required
+              className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="">Select Soil Type</option>
+              <option value="Alluvial Soil">Alluvial Soil</option>
+              <option value="Black Soil">Black Soil</option>
+              <option value="Red Soil">Red Soil</option>
+              <option value="Laterite Soil">Laterite Soil</option>
+              <option value="Arid Soil">Arid Soil</option>
+              <option value="Mountain Soil">Mountain or Forest Soil</option>
             </select>
           </div>
 
@@ -498,14 +555,42 @@ const AddCropForm = () => {
           </div>
 
           <div>
-            <label htmlFor="fertilizer" className="block text-sm font-medium text-gray-700 mb-1">
-              Fertilizer (kg)
+            <label htmlFor="fertilizer_n" className="block text-sm font-medium text-gray-700 mb-1">
+              Fertilizer (N) (kg)
             </label>
             <input
               type="number"
-              name="fertilizer"
-              id="fertilizer"
-              value={formData.fertilizer}
+              name="fertilizer_n"
+              id="fertilizer_n"
+              value={formData.fertilizer_n}
+              onChange={handleChange}
+              required
+              className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+          <div>
+            <label htmlFor="fertilizer_p" className="block text-sm font-medium text-gray-700 mb-1">
+              Fertilizer (P) (kg)
+            </label>
+            <input
+              type="number"
+              name="fertilizer_p"
+              id="fertilizer_p"
+              value={formData.fertilizer_p}
+              onChange={handleChange}
+              required
+              className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+          <div>
+            <label htmlFor="fertilizer_k" className="block text-sm font-medium text-gray-700 mb-1">
+              Fertilizer (K) (kg)
+            </label>
+            <input
+              type="number"
+              name="fertilizer_k"
+              id="fertilizer_k"
+              value={formData.fertilizer_k}
               onChange={handleChange}
               required
               className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"

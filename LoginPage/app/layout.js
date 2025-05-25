@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "FarmSight",
+  title: "Smart Kisaan",
   description: "Your Personal Dashboard and Assistant for all your Agriculture Needs!",
 };
 

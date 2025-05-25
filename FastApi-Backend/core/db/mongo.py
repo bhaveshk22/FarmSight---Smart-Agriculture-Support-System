@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 # MONGO_URI=settings.MONGODB_CONNECTION_STRING
 # MongoDB setup
-MONGO_URI="mongodb+srv://negiswarnim06:fs4AMgkI4z6Ve5SN@farmsight.91g996w.mongodb.net/?retryWrites=true&w=majority&appName=FarmSight"
+MONGO_URI="mongodb+srv://bhaveshk2210:pMg0xg1HPcS3WSud@farmsight.xhjudum.mongodb.net/?retryWrites=true&w=majority&appName=FarmSight"
 client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_URI)
 db = client["FarmSight"]
 crop_collection = db["crops"]  # collection renamed

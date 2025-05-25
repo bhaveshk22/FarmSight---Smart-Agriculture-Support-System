@@ -1,27 +1,41 @@
 import pandas as pd
 
 # Transform a single crop_yield-style row into the full dataset format
+import pandas as pd
+
 def transform_user_input(row, expected_columns):
-    columns = ['Crop', 'Crop_Year', 'Season', 'Area',
-               'Annual_Rainfall', 'Fertilizer', 'Pesticide']
 
-    if not isinstance(row, list) or len(row) != len(columns):
-        raise ValueError("Row must match the expected format of crop_yield.")
+    # Check correct input format
+    if not isinstance(row, list) or len(row) != 10:
+        raise ValueError("Row must contain exactly 10 elements: "
+                         "[Crop, Crop_Year, Season, soil_type, Area, Annual_Rainfall, "
+                         "fertilizer_n, fertilizer_p, fertilizer_k, Pesticide]")
 
-    # Create DataFrame from single row
-    df = pd.DataFrame([row], columns=columns)
+    # Unpack values
+    crop, crop_year, season, soil_type, area, rainfall, fert_n, fert_p, fert_k, pesticide = row
+
+    # Combine fertilizers
+    total_fertilizer = fert_n + fert_p + fert_k
+
+    # Create simplified row (excluding soil_type and separate fertilizers)
+    transformed_row = [crop, crop_year, season, area, rainfall, total_fertilizer, pesticide]
+
+    # Column names for simplified row
+    columns = ['Crop', 'Crop_Year', 'Season', 'Area', 'Annual_Rainfall', 'Fertilizer', 'Pesticide']
+
+    # Create DataFrame
+    df = pd.DataFrame([transformed_row], columns=columns)
 
     # Select relevant features
     features = df[['Crop_Year', 'Annual_Rainfall', 'Fertilizer', 'Pesticide', 'Crop']]
 
-    # One-hot encode
+    # One-hot encode Crop
     crop_dummies = pd.get_dummies(features['Crop'], prefix='Crop')
-    # state_dummies = pd.get_dummies(features['State'], prefix='State')
 
+    # Concatenate final DataFrame
     transformed = pd.concat([
         features[['Crop_Year', 'Annual_Rainfall', 'Fertilizer', 'Pesticide']],
-        crop_dummies,
-        # state_dummies
+        crop_dummies
     ], axis=1)
 
     # Add any missing columns and set them to 0
@@ -33,3 +47,4 @@ def transform_user_input(row, expected_columns):
     transformed = transformed[expected_columns]
 
     return transformed
+

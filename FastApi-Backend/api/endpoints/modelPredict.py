@@ -9,8 +9,8 @@ import pandas as pd
 router = APIRouter(prefix="/api/model", tags=["Model"])
 
 # Load model and dataset
-model_path = r"C:\Z Local Disk (D)\\Final year project\\FarmSight---Smart-Agriculture-Support-System\\Model\\model.pkl"
-dataset_path = r"C:\Z Local Disk (D)\\Final year project\\FarmSight---Smart-Agriculture-Support-System\\Model\\dataset.csv"
+model_path = r"C:\Z Local Disk (D)\\Final year project\Smart-Kisaan---Dashboard-for-Farmers\\Model\\model.pkl"
+dataset_path = r"C:\Z Local Disk (D)\\Final year project\Smart-Kisaan---Dashboard-for-Farmers\\Model\\dataset.csv"
 
 with open(model_path, 'rb') as f:
     model = pickle.load(f)
@@ -31,9 +31,12 @@ async def predict(request: CropPredictionRequest):  # ✅ async def
             crop_data["crop_name"],
             crop_data["crop_year"],
             crop_data["season"],
+            crop_data['soil_type'],
             crop_data["area"],
             crop_data["annual_rainfall"],
-            crop_data["fertilizer"],
+            crop_data["fertilizer_n"],
+            crop_data["fertilizer_p"],
+            crop_data["fertilizer_k"],
             crop_data["pesticide"]
         ]
 
