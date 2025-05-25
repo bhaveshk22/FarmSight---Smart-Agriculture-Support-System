@@ -9,10 +9,9 @@ from models.database import CropModel, CropUpdateModel
 
 logger = logging.getLogger(__name__)
 
-# MONGO_URI=settings.MONGODB_CONNECTION_STRING
+# MONGO_URI=settings.mongo_
 # MongoDB setup
-MONGO_URI="mongodb+srv://bhaveshk2210:pMg0xg1HPcS3WSud@farmsight.xhjudum.mongodb.net/?retryWrites=true&w=majority&appName=FarmSight"
-client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_URI)
+client = motor.motor_asyncio.AsyncIOMotorClient(settings.MONGODB_CONNECTION_STRING)
 db = client["FarmSight"]
 crop_collection = db["crops"]  # collection renamed
 

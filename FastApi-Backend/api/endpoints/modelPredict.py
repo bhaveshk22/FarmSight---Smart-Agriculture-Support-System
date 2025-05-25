@@ -5,12 +5,13 @@ from models.schemas import CropPredictionRequest
 from core.prediction.predict import transform_user_input
 import pickle
 import pandas as pd
+from config import settings
 
 router = APIRouter(prefix="/api/model", tags=["Model"])
 
 # Load model and dataset
-model_path = r"C:\Z Local Disk (D)\\Final year project\Smart-Kisaan---Dashboard-for-Farmers\\Model\\model.pkl"
-dataset_path = r"C:\Z Local Disk (D)\\Final year project\Smart-Kisaan---Dashboard-for-Farmers\\Model\\dataset.csv"
+model_path = settings.MODEL
+dataset_path = settings.DATASET
 
 with open(model_path, 'rb') as f:
     model = pickle.load(f)
