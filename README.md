@@ -1,4 +1,4 @@
-# Smart Kisaan 🌾
+# Crop Yield Prediction System 🌾
 An AI-powered platform to assist farmers with crop yield prediction, resource planning, market pricing and many more...
 
 ---
